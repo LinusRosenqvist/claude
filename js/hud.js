@@ -141,7 +141,8 @@
 
       // --- jetpack-bränsle ---
       if (p.jetpack) {
-        const bx = 6, by = VH - 16;
+        // på mobil ligger knapparna i nedre hörnen, så mätaren flyttas upp
+        const bx = 6, by = I.touch.enabled ? 22 : VH - 16;
         S.draw(ctx, 'jetpack', 0, bx + 8, by + 14, { sx: 0.8, sy: 0.8 });
         ctx.fillStyle = K;
         ctx.fillRect(bx + 17, by + 3, 54, 8);
@@ -159,7 +160,7 @@
       if (p.magnet > 0) pw.push(['magnet', p.magnet / 900]);
       if (p.disco > 0) pw.push(['disco', p.disco / 600]);
       pw.forEach((it, i) => {
-        const bx = VW - 22 - i * 22, by = VH - 22;
+        const bx = VW - 22 - i * 22, by = I.touch.enabled ? 48 : VH - 22;
         S.draw(ctx, it[0], Math.floor(t / 8), bx + 7, by + 15);
         ctx.fillStyle = K;
         ctx.fillRect(bx, by + 17, 16, 3);

@@ -141,10 +141,11 @@
         }
       }
       if (Game.hitstop > 0) {
+        // frys bilden en kort stund men behåll knapptryck till nästa riktiga uppdatering
         Game.hitstop--;
-      } else if (Game.scene && (!tr || tr.phase !== 'hold')) {
-        Game.scene.update();
+        return;
       }
+      if (Game.scene && (!tr || tr.phase !== 'hold')) Game.scene.update();
       I.endFrame();
     },
 

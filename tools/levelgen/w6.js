@@ -195,6 +195,14 @@ function l63() {
   L.str(34, S - 5, 'B!B');
   L.pup(35, S - 5, 'shield');
   L.set(40, S - 1, 'c');
+  // diamanter i korridoren
+  L.plat(7, S - 3, 3);
+  L.set(8, S - 4, '*');
+  L.plat(22, S - 3, 3);
+  L.plat(26, S - 6, 3);
+  L.set(27, S - 7, '*');
+  L.plat(42, S - 3, 3);
+  L.set(43, S - 4, '*');
   // arenan
   L.plat(52, S - 4, 4);
   L.plat(66, S - 4, 4);

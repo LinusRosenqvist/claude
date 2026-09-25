@@ -95,10 +95,13 @@ function l51() {
   L.fill(207, 10, 217, S - 1, ':');
   L.set(214, S - 1, 'K');
   L.coins(208, S - 1, 4);
-  L.plat(201, 15, 3);
-  L.plat(203, 11, 3);
-  L.plat(201, 8, 3);
+  L.plat(200, 17, 3);
+  L.plat(203, 14, 3);
+  L.plat(200, 11, 3);
+  L.plat(203, 8, 3);
   L.set(212, 5, 'k');
+  L.set(226, 5, '*');
+  L.coins(218, 5, 5);
   L.set(203, S - 1, 'k');
   L.set(197, S - 1, 'z');
   L.sign(194, S - 1, 'TORNET! MEN DÖRREN ÄR BORTA... HMM.');

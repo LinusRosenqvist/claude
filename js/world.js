@@ -790,7 +790,7 @@
       const lc = this.lightCanvas;
       const l = lc.getContext('2d');
       const cam = this.cam;
-      const dark = this.darkness * (1 - this.binoK * 0.55);
+      const dark = this.darkness * (1 - this.binoK * 0.75);
       l.globalCompositeOperation = 'source-over';
       l.clearRect(0, 0, lc.width, lc.height);
       l.fillStyle = 'rgba(6,4,20,' + dark.toFixed(3) + ')';

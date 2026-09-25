@@ -491,7 +491,8 @@
         else F.draw(ctx, '×', x, y - 3, { align: 'center', color: '#9aa7c2' });
         if (done) {
           const l = HK.Save.level(def.id);
-          for (let g = 0; g < 3; g++) {
+          const ng = HK.Save.gemCount(def);
+          for (let g = 0; g < ng; g++) {
             ctx.fillStyle = K;
             ctx.fillRect(x - 7 + g * 5, y + r + 2, 4, 4);
             ctx.fillStyle = l && l.gems[g] ? ['#ff4d6d', '#4ade6b', '#4dc3ff'][g] : '#3b3f5c';

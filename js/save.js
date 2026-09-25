@@ -55,11 +55,21 @@
       return res;
     },
 
+    gemCount(def) {
+      if (def.gemCount == null) {
+        let n = 0;
+        for (const r of def.rows) for (let i = 0; i < r.length; i++) if (r[i] === '*') n++;
+        for (const o of def.overlay || []) if (o[2] === '*') n++;
+        def.gemCount = n;
+      }
+      return def.gemCount;
+    },
+
     totals() {
       let gems = 0, maxGems = 0, done = 0, stars = 0;
       for (const def of HK.LEVELS) {
         const l = Save.data.levels[def.id];
-        maxGems += def.gems || 3;
+        maxGems += Save.gemCount(def);
         if (l) {
           gems += l.gems.filter(Boolean).length;
           if (l.done) done++;
