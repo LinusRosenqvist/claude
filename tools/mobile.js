@@ -26,7 +26,7 @@ const { chromium, devices } = require('playwright');
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   }
   // gå till en nivå direkt
-  await page.goto(url + '?level=1-1');
+  await page.goto(url + '?level=' + (process.argv[4] || '1-1'));
   await page.waitForTimeout(600);
   await page.touchscreen.tap(422, 200);
   await page.waitForTimeout(2200);

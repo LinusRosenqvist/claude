@@ -14,9 +14,10 @@
     --ink: #1a1c2c;
     --text: #ffffff;
     --accent: #ffd23f;
-    --btn: rgba(255, 255, 255, 0.14);
-    --btn-on: rgba(255, 210, 63, 0.55);
-    --btn-edge: rgba(255, 255, 255, 0.55);
+    --btn: rgba(20, 14, 48, 0.38);
+    --btn-on: rgba(255, 210, 63, 0.6);
+    --btn-edge: rgba(255, 255, 255, 0.75);
+    --btn-ring: rgba(26, 28, 44, 0.7);
     --btn-text: #ffffff;
   }
   html, body {
@@ -36,9 +37,10 @@
     background: var(--btn); color: var(--btn-text);
     border: 3px solid var(--btn-edge); border-radius: 14px;
     font: bold 13px/1 monospace; letter-spacing: 1px;
-    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.35);
+    text-shadow: 0 2px 0 var(--btn-ring), 0 0 3px var(--btn-ring);
+    box-shadow: 0 0 0 2px var(--btn-ring), 0 4px 0 rgba(0, 0, 0, 0.35);
   }
-  #touch .tb.on { background: var(--btn-on); transform: translateY(2px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35); }
+  #touch .tb.on { background: var(--btn-on); transform: translateY(2px); box-shadow: 0 0 0 2px var(--btn-ring), 0 2px 0 rgba(0, 0, 0, 0.35); }
   #touch .tb-left  { left: max(16px, env(safe-area-inset-left)); bottom: max(18px, env(safe-area-inset-bottom)); width: 64px; height: 64px; font-size: 24px; }
   #touch .tb-right { left: calc(max(16px, env(safe-area-inset-left)) + 76px); bottom: max(18px, env(safe-area-inset-bottom)); width: 64px; height: 64px; font-size: 24px; }
   #touch .tb-down  { left: calc(max(16px, env(safe-area-inset-left)) + 44px); bottom: calc(max(18px, env(safe-area-inset-bottom)) + 76px); width: 52px; height: 40px; font-size: 18px; }

@@ -14,8 +14,15 @@ Se upp för Papp-Kevins!
 - **Jetpack, sköld, trippelskott, myntmagnet och disco-läge** (oövervinnlig i tio sekunder).
 - **Tre diamanter per bana** och tre stjärnor att samla: hitta Kevin, ta alla diamanter
   och klara banan på under par-tiden.
+- **Oändligt läge**: nya slumpade banor i all oändlighet. Hitta Kevin innan tiden
+  tar slut, varje Kevin ger mer tid, och slå ditt rekord.
 - Egen chiptune-musik för varje värld, pixelgrafik och en karta över Pixelriket.
 - Framstegen sparas automatiskt i webbläsaren.
+
+| | |
+| --- | --- |
+| ![Titelskärmen](docs/titel.png) | ![Kartan över Pixelriket](docs/karta.png) |
+| ![Neonstaden](docs/neonstaden.png) | ![Kristallgrottan](docs/grottan.png) |
 
 ## Spela
 
@@ -87,6 +94,7 @@ Nivåerna skrivs i `tools/levelgen/wN.js` och byggs till `js/levels/`:
 ```sh
 node tools/levelgen/build.js     # bygg alla nivåer
 node tools/validate.js           # kontrollera att Kevin och alla diamanter går att nå
+node tools/validate-endless.js   # samma kontroll för slumpade banor i oändligt läge
 ```
 
 `tools/validate.js` simulerar spelarens riktiga fysik från alla ställen man kan stå på

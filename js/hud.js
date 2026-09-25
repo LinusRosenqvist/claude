@@ -137,7 +137,7 @@
         else S.draw(ctx, HK.Ent.Gem.NAMES[i % 3], 0, gx, 18, { alpha: 0.25 });
       }
       // Kevin-radar
-      Hud.radar(ctx, VW - 94, 24, W);
+      Hud.radar(ctx, VW - 100, 24, W);
 
       // --- jetpack-bränsle ---
       if (p.jetpack) {
@@ -215,7 +215,7 @@
     radar(ctx, x, y, W) {
       const heat = W.heat;
       const k = W.kevin;
-      Hud.panel(ctx, x, y, 88, 22, { fill: 'rgba(22,16,48,0.8)', edge: '#4d3fa6' });
+      Hud.panel(ctx, x, y, 96, 22, { fill: 'rgba(22,16,48,0.8)', edge: '#4d3fa6' });
       S.draw(ctx, 'kevin_head', 0, x + 10, y + 18);
       const n = 6;
       const lvl = Math.ceil(heat * n - 0.001);
