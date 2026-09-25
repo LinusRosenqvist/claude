@@ -373,7 +373,6 @@
     const s = sky.getContext('2d');
     bands(s, 0, 0, W, H, th.sky);
     // nebulosa
-    const r = U.rng(91);
     const blob = (cx, cy, rad, col) => {
       for (let y = -rad; y <= rad; y++)
         for (let x = -rad; x <= rad; x++) {

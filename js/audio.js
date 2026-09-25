@@ -1,7 +1,6 @@
 /* Hitta Kevin — chiptune-ljud: syntade effekter och en liten sequencer med låtar. */
 (function (HK) {
   'use strict';
-  const U = HK.U;
 
   const A = {
     ctx: null,
