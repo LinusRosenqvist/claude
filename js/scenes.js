@@ -337,12 +337,23 @@
         F.draw(ctx, '?', cx - 90, gy - 64 + Math.round(Math.sin(G.t * 0.1) * 2), { color: '#ffd23f', scale: 2, align: 'center' });
       } else if (st.pose === 'map') {
         const worlds = ['kullar', 'stad', 'grotta', 'moln', 'lava', 'rymd'];
+        const foes = ['blobb', 'dronare', 'krabba', 'askmoln', 'lavabubbla', 'ufo'];
         worlds.forEach((w, i) => {
-          const x = 110 + i * 46, y = 70 + (i % 2) * 20;
-          HK.Hud.panel(ctx, x, y, 40, 30, { fill: HK.Themes[w].sky[2], edge: '#ffffff' });
-          F.draw(ctx, String(i + 1), x + 20, y + 11, { align: 'center', color: '#ffffff' });
+          const x = 104 + i * 46, y = 58 + (i % 2) * 22;
+          const th = HK.Themes[w];
+          HK.Hud.panel(ctx, x - 1, y - 1, 44, 40, { fill: th.sky[0], edge: '#ffffff' });
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(x, y, 42, 38);
+          ctx.clip();
+          HK.BgUtil.bands(ctx, x, y, 42, 38, th.sky);
+          const At = HK.Tiles.atlas(w);
+          for (let k = 0; k < 3; k++) ctx.drawImage(At.ground[14 * 4 + k], x + k * 16, y + 26);
+          S.draw(ctx, foes[i], Math.floor(G.t / 10), x + 21, y + 26 + (i === 3 || i === 5 ? -8 : 0));
+          ctx.restore();
+          F.draw(ctx, String(i + 1), x + 4, y + 3, { color: '#ffffff' });
         });
-        S.draw(ctx, 'kevin_head', 0, 110 + 5 * 46 + 20 + Math.round(Math.sin(G.t * 0.1) * 3), 70 + 20 - 6, {});
+        S.draw(ctx, 'kevin_head', 0, 104 + 5 * 46 + 21 + Math.round(Math.sin(G.t * 0.1) * 3), 58 + 22 - 4, {});
       } else if (st.pose === 'decoy') {
         S.draw(ctx, 'decoy', 0, cx - 50, gy + 4, { sx: 2, sy: 2 });
         S.draw(ctx, 'kevin_wave', Math.floor(G.t / 12), cx + 50, gy, { sx: 2, sy: 2, flip: true });
