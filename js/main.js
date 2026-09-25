@@ -18,6 +18,7 @@
     } else if (scene === 'map') HK.Game.setScene(new HK.Scenes.MapScene());
     else if (scene === 'story') HK.Game.setScene(new HK.Scenes.StoryScene());
     else if (scene === 'ending') HK.Game.setScene(new HK.Scenes.EndingScene({}));
+    else if (scene === 'endless') HK.Game.setScene(new HK.Scenes.EndlessScene());
     else HK.Game.setScene(new HK.Scenes.TitleScene());
     const loader = document.getElementById('loader');
     if (loader) loader.remove();

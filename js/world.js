@@ -52,6 +52,9 @@
       this.heat = 0;
       this.lightCanvas = U.makeCanvas(VW / 2, VH / 2);
       this.onComplete = opts.onComplete || null;
+      this.onDeath = opts.onDeath || null;
+      this.hudTimer = null;
+      this.hudTitle = null;
       this.onBossStart = opts.onBossStart || null;
       FX.clear();
       this.spawnAll();
@@ -541,6 +544,7 @@
       FX.text(p.cx, p.y - 10, 'OJ!', '#ffffff', { life: 40 });
     }
     onPlayerDied() {
+      if (this.onDeath) { this.onDeath(); return; }
       const p = this.player;
       const sx = U.clamp(p.cx - this.cam.x, 20, VW - 20), sy = U.clamp(p.cy - this.cam.y, 20, VH - 20);
       const spot = this.checkpoint || this.start;
@@ -602,7 +606,7 @@
       this.foundT++;
       const k = this.kevin;
       if (this.foundT % 25 === 0 && this.foundT < 200) FX.confetti(k.cx + U.rand(-80, 80), this.cam.y - 4, 20, { angle: Math.PI / 2, up: 0, min: 0.5, max: 2 });
-      if (this.foundT === 260 && this.onComplete) this.onComplete();
+      if (this.foundT === (this.def.endless ? 150 : 260) && this.onComplete) this.onComplete();
     }
 
     // ------------------------------------------------------------------
@@ -722,6 +726,13 @@
       const kind = this.theme.ambient;
       const c = this.cam;
       const r = Math.random();
+      if (this.wind && r < 0.35) {
+        const dir = Math.sign(this.wind);
+        FX.add({
+          type: 'px', streak: U.randInt(4, 10), x: c.x + (dir < 0 ? VW + 10 : -10), y: c.y + U.rand(0, VH),
+          vx: dir * U.rand(4, 7), vy: U.rand(-0.2, 0.2), life: 140, size: 1, color: 'rgba(255,255,255,0.55)', drag: 1,
+        }, true);
+      }
       switch (kind) {
         case 'petals':
           if (r < 0.06) FX.add({ type: 'px', x: c.x + U.rand(0, VW + 60), y: c.y - 4, vx: -U.rand(0.3, 0.8), vy: U.rand(0.3, 0.6), life: 400, size: 2, color: U.pick(['#ffc2cf', '#ffffff', '#ffe0f0', '#fff3a0']), drag: 1 });

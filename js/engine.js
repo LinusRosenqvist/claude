@@ -150,6 +150,12 @@
 
     render() {
       const ctx = Game.ctx;
+      // visa muspekaren i menyer, dölj den när spelet ritar ett eget sikte
+      const wantCursor = Game.scene && Game.scene.hideCursor && Game.scene.hideCursor() ? 'none' : 'default';
+      if (Game.cursor !== wantCursor) {
+        Game.cursor = wantCursor;
+        Game.screen.style.cursor = wantCursor;
+      }
       if (Game.scene) Game.scene.render(ctx);
       Game.renderTransition(ctx);
       const s = Game.sctx;

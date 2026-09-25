@@ -109,6 +109,7 @@
       this.mode = 'press';
       this.menu = new Menu([
         { label: 'SPELA', action: () => this.play() },
+        { label: 'OÄNDLIGT LÄGE', action: () => G.transition(() => G.setScene(new HK.Scenes.EndlessScene())) },
         { label: 'KONTROLLER', action: () => { this.mode = 'controls'; } },
         { label: 'INSTÄLLNINGAR', action: () => { this.mode = 'settings'; this.settings.reset(0); } },
       ]);
@@ -175,8 +176,10 @@
       if (this.mode === 'press') {
         if (Math.floor(t / 30) % 2 === 0) F.draw(ctx, I.touch.enabled ? 'TRYCK FÖR ATT BÖRJA' : 'TRYCK PÅ EN TANGENT', VW / 2, 150, { align: 'center', color: '#ffffff' });
       } else if (this.mode === 'menu') {
-        Hud.panel(ctx, VW / 2 - 80, 128, 160, 60);
-        this.menu.draw(ctx, VW / 2, 138);
+        Hud.panel(ctx, VW / 2 - 80, 122, 160, 76);
+        this.menu.draw(ctx, VW / 2, 132);
+        const eb = HK.Endless && HK.Endless.best ? HK.Endless.best() : null;
+        if (eb && eb.best > 0) F.draw(ctx, 'REKORD I OÄNDLIGT LÄGE: ' + eb.best + (eb.best === 1 ? ' KEVIN' : ' KEVINS'), VW / 2, 204, { align: 'center', color: '#ffd23f', alpha: 0.9 });
       } else if (this.mode === 'settings') {
         Hud.panel(ctx, VW / 2 - 100, 104, 200, 106);
         this.settings.draw(ctx, VW / 2, 113);
@@ -360,7 +363,7 @@
       });
       if (this.chars >= st.text.length && Math.floor(t / 20) % 2 === 0) F.draw(ctx, '▼', VW / 2, 226, { align: 'center', color: '#ffd23f' });
       F.draw(ctx, (this.i + 1) + '/' + STORY.length, VW - 10, VH - 14, { align: 'right', color: '#6b7699' });
-      F.draw(ctx, 'ESC = HOPPA ÖVER', 10, VH - 14, { color: '#6b7699' });
+      F.draw(ctx, I.touch.enabled ? 'TRYCK FÖR ATT FORTSÄTTA' : 'SPACE = NÄSTA   ESC = HOPPA ÖVER', 10, VH - 14, { color: '#6b7699' });
     }
   }
 
@@ -632,6 +635,9 @@
     }
     onHide() {
       if (this.state === 'play') this.pause();
+    }
+    hideCursor() {
+      return this.state === 'play' && this.world.state === 'play';
     }
     pause() {
       this.state = 'pause';

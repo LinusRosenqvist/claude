@@ -9,27 +9,26 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' fill='%23ffd23f'/%3E%3Crect x='1' y='1' width='14' height='14' fill='%23e59a17'/%3E%3Cpath fill='%231a1c2c' d='M4 3h3v4h1V6h1V5h1V4h1V3h2v2h-1v1h-1v1H9v2h1v1h1v1h1v1h1v2h-2v-1h-1v-1H9v-1H8v-1H7v4H4z'/%3E%3C/svg%3E">
 <style>
   :root {
+    color-scheme: dark;
     --bg: #0b0820;
     --ink: #1a1c2c;
+    --text: #ffffff;
+    --accent: #ffd23f;
     --btn: rgba(255, 255, 255, 0.14);
     --btn-on: rgba(255, 210, 63, 0.55);
     --btn-edge: rgba(255, 255, 255, 0.55);
     --btn-text: #ffffff;
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) { --bg: #0b0820; }
-  }
-  :root[data-theme="dark"] { --bg: #0b0820; }
   html, body {
-    margin: 0; padding: 0; height: 100%; overflow: hidden;
-    background: var(--bg);
+    margin: 0; height: 100%; overflow: hidden;
+    background: var(--bg); color: var(--text);
     touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
   }
-  canvas#game { position: fixed; inset: 0; display: block; cursor: none; image-rendering: pixelated; image-rendering: crisp-edges; }
+  canvas#game { position: fixed; inset: 0; display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
   #loader {
     position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-    color: #ffd23f; font: bold 20px monospace; letter-spacing: 2px;
+    color: var(--accent); font: bold 20px monospace; letter-spacing: 2px;
   }
   #touch { position: fixed; inset: 0; pointer-events: none; z-index: 5; }
   #touch .tb {
@@ -40,12 +39,12 @@
     box-shadow: 0 4px 0 rgba(0, 0, 0, 0.35);
   }
   #touch .tb.on { background: var(--btn-on); transform: translateY(2px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35); }
-  #touch .tb-left  { left: max(14px, env(safe-area-inset-left)); bottom: max(18px, env(safe-area-inset-bottom)); width: 64px; height: 64px; font-size: 24px; }
-  #touch .tb-right { left: calc(max(14px, env(safe-area-inset-left)) + 76px); bottom: max(18px, env(safe-area-inset-bottom)); width: 64px; height: 64px; font-size: 24px; }
-  #touch .tb-down  { left: calc(max(14px, env(safe-area-inset-left)) + 44px); bottom: calc(max(18px, env(safe-area-inset-bottom)) + 76px); width: 52px; height: 40px; font-size: 18px; }
-  #touch .tb-jump  { right: max(14px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); width: 78px; height: 78px; border-radius: 50%; }
-  #touch .tb-shoot { right: calc(max(14px, env(safe-area-inset-right)) + 90px); bottom: max(18px, env(safe-area-inset-bottom)); width: 64px; height: 64px; border-radius: 50%; }
-  #touch .tb-look  { right: calc(max(14px, env(safe-area-inset-right)) + 20px); bottom: calc(max(18px, env(safe-area-inset-bottom)) + 92px); width: 70px; height: 34px; font-size: 11px; }
+  #touch .tb-left  { left: max(16px, env(safe-area-inset-left)); bottom: max(18px, env(safe-area-inset-bottom)); width: 64px; height: 64px; font-size: 24px; }
+  #touch .tb-right { left: calc(max(16px, env(safe-area-inset-left)) + 76px); bottom: max(18px, env(safe-area-inset-bottom)); width: 64px; height: 64px; font-size: 24px; }
+  #touch .tb-down  { left: calc(max(16px, env(safe-area-inset-left)) + 44px); bottom: calc(max(18px, env(safe-area-inset-bottom)) + 76px); width: 52px; height: 40px; font-size: 18px; }
+  #touch .tb-jump  { right: max(16px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); width: 78px; height: 78px; border-radius: 50%; }
+  #touch .tb-shoot { right: calc(max(16px, env(safe-area-inset-right)) + 90px); bottom: max(18px, env(safe-area-inset-bottom)); width: 64px; height: 64px; border-radius: 50%; }
+  #touch .tb-look  { right: calc(max(16px, env(safe-area-inset-right)) + 20px); bottom: calc(max(18px, env(safe-area-inset-bottom)) + 92px); width: 70px; height: 34px; font-size: 11px; }
   #touch .tb-pause { right: max(10px, env(safe-area-inset-right)); top: max(10px, env(safe-area-inset-top)); width: 40px; height: 34px; }
   #rotate {
     display: none; position: fixed; inset: 0; z-index: 10; background: rgba(11, 8, 32, 0.92);
@@ -59,7 +58,7 @@
 <body>
 <canvas id="game" width="480" height="270" aria-label="Hitta Kevin – spelet"></canvas>
 <div id="loader">LADDAR...</div>
-<div id="rotate"><div>📱↻<br><br>VRID MOBILEN TILL LIGGANDE<br>FÖR ATT SPELA</div></div>
+<div id="rotate"><div>VRID MOBILEN TILL LIGGANDE<br>FÖR ATT SPELA</div></div>
 <noscript><p style="color:#fff;font-family:monospace;padding:16px">Hitta Kevin behöver JavaScript.</p></noscript>
 <script src="js/util.js"></script>
 <script src="js/font.js"></script>
@@ -79,6 +78,7 @@
 <script src="js/hud.js"></script>
 <script src="js/save.js"></script>
 <script src="js/scenes.js"></script>
+<script src="js/endless.js"></script>
 <script src="js/levels/world1.js"></script>
 <script src="js/levels/world2.js"></script>
 <script src="js/levels/world3.js"></script>

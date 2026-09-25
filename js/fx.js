@@ -154,6 +154,7 @@
         if (p.fade) ctx.globalAlpha = 1 - k;
         ctx.fillStyle = p.color;
         if (p.rain) ctx.fillRect(x, y, 1, 4);
+        else if (p.streak) ctx.fillRect(x, y, p.streak, 1);
         else ctx.fillRect(x, y, s, s);
         ctx.globalAlpha = 1;
         break;

@@ -123,8 +123,12 @@
       F.draw(ctx, '×' + U.pad(W.stats.coins, 2), x + 14, 8, { color: '#fff3a0', mono: true });
       x += 44;
       // tid & nivånamn
-      F.draw(ctx, W.def.id + ' ' + W.def.name, VW / 2, 5, { align: 'center', color: '#ffffff' });
-      F.draw(ctx, U.fmtTime(W.stats.time), VW / 2, 15, { align: 'center', color: '#c7d2ff', mono: true });
+      F.draw(ctx, W.hudTitle || W.def.id + ' ' + W.def.name, VW / 2, 5, { align: 'center', color: '#ffffff' });
+      if (W.hudTimer != null) {
+        const low = W.hudTimer < 15 * 60;
+        const blink = low && Math.floor(W.t / 15) % 2 === 0;
+        F.draw(ctx, U.fmtTime(W.hudTimer), VW / 2, 15, { align: 'center', color: blink ? '#ff3860' : low ? '#ff9f1c' : '#7dff6b', mono: true, scale: low ? 1 : 1 });
+      } else F.draw(ctx, U.fmtTime(W.stats.time), VW / 2, 15, { align: 'center', color: '#c7d2ff', mono: true });
       // diamanter
       for (let i = 0; i < W.gemTotal; i++) {
         const got = W.stats.gems[i];

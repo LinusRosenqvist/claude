@@ -36,7 +36,7 @@ function load(opts) {
   };
   window.window = window;
   const ctx = vm.createContext({ window, document, console, Math, Date, JSON, setInterval() {}, clearInterval() {}, navigator: {}, performance: window.performance, requestAnimationFrame() {}, URLSearchParams });
-  const files = ['util', 'font', 'input', 'sprites', 'art', 'engine', 'fx', 'audio', 'themes', 'tiles', 'level', 'player', 'entities', 'enemies', 'world', 'hud', 'save'];
+  const files = ['util', 'font', 'input', 'sprites', 'art', 'engine', 'fx', 'audio', 'themes', 'tiles', 'level', 'player', 'entities', 'enemies', 'world', 'hud', 'save', 'endless'];
   for (const f of files) vm.runInContext(fs.readFileSync(path.join(root, 'js', f + '.js'), 'utf8'), ctx, { filename: f + '.js' });
   const levelFiles = opts.levelFiles || fs.readdirSync(path.join(root, 'js', 'levels')).filter((f) => f.endsWith('.js')).sort();
   for (const f of levelFiles) vm.runInContext(fs.readFileSync(path.join(root, 'js', 'levels', f), 'utf8'), ctx, { filename: f });
