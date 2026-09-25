@@ -215,7 +215,7 @@
         if (p.vy > 0 && U.overlap(p, s) && p.lastBottom <= s.y + 6) {
           const held = I.held('jump');
           p.y = s.y - p.h;
-          p.vy = -(held ? HK.PH.springHeld : HK.PH.spring) * Math.sqrt(this.gravity);
+          p.vy = -(held ? HK.PH.springHeld : HK.PH.spring) * p.jmul();
           p.jumping = held;
           p.thrustArmed = false;
           p.sx = 0.7; p.sy = 1.35;

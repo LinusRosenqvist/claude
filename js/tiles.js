@@ -53,10 +53,16 @@
         break;
       }
       case 'roof': {
-        R(ctx, 0, 8, 16, 1, g.fillD);
-        R(ctx, (variant * 5) % 16, 0, 1, 8, g.fillD);
-        R(ctx, (variant * 5 + 8) % 16, 9, 1, 7, g.fillD);
-        for (let i = 0; i < 4; i++) P(ctx, Math.floor(r() * 16), Math.floor(r() * 16), g.fillL);
+        // fasad med fönster
+        for (const wx of [3, 10]) {
+          const lit = r() < 0.45;
+          const col = lit ? (r() < 0.75 ? '#ffd23f' : '#6ff6ff') : '#20233a';
+          R(ctx, wx - 1, 5, 5, 7, g.fillD);
+          R(ctx, wx, 6, 3, 5, col);
+          if (lit) R(ctx, wx, 6, 3, 1, U.mix(col, '#ffffff', 0.5));
+          R(ctx, wx, 8, 3, 1, g.fillD);
+        }
+        R(ctx, 0, 14, 16, 1, g.fillD);
         break;
       }
       case 'cloud': {

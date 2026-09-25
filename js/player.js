@@ -13,7 +13,7 @@
     jump: 6.3, jumpRun: 0.22, gUp: 0.32, gApex: 0.19, gDown: 0.58, maxFall: 5.8,
     coyote: 6, buffer: 8,
     stomp: 5.4, stompHeld: 7.8,
-    spring: 10.8, springHeld: 12.8,
+    spring: 9.0, springHeld: 10.2,
     jetThrust: 0.64, jetMaxUp: 3.5, jetDrain: 0.5, jetRegen: 1.3,
   };
   HK.PH = PH;
@@ -74,6 +74,11 @@
 
     gmul() {
       return this.world.gravity;
+    },
+
+    // Hoppstyrka skalas mjukare än gravitationen: lägre gravitation = högre hopp.
+    jmul() {
+      return Math.pow(this.world.gravity, 0.3);
     },
 
     setCrouch(on) {
@@ -213,7 +218,7 @@
       if (this.thrusting) g = PH.gUp;
       else if (this.vy < 0 && this.jumping && jumpHeld) g = Math.abs(this.vy) < 1.1 ? PH.gApex : PH.gUp;
       else g = PH.gDown;
-      if (this.vy < 0 && this.jumping && !jumpHeld && this.vy < -3.2 * Math.sqrt(gm)) this.vy = -3.2 * Math.sqrt(gm);
+      if (this.vy < 0 && this.jumping && !jumpHeld && this.vy < -3.2 * this.jmul()) this.vy = -3.2 * this.jmul();
       this.vy += g * gm;
       const maxFall = PH.maxFall * (gm < 1 ? 0.65 : 1);
       if (this.vy > maxFall) this.vy = maxFall;
@@ -287,7 +292,7 @@
     },
 
     doJump(v) {
-      this.vy = -v * Math.sqrt(this.gmul());
+      this.vy = -v * this.jmul();
       this.jumping = true;
       this.coyote = 0;
       this.jumpBuf = 0;
@@ -300,7 +305,7 @@
     },
 
     bounce(held) {
-      this.vy = -(held ? PH.stompHeld : PH.stomp) * Math.sqrt(this.gmul());
+      this.vy = -(held ? PH.stompHeld : PH.stomp) * this.jmul();
       this.jumping = held;
       this.coyote = 0;
       this.thrustArmed = false;
@@ -345,9 +350,11 @@
         for (let tx = x0; tx <= x1; tx++) {
           const t = lvl.get(tx, ty);
           if (t === T.LIQUID) {
-            // bara om vi faktiskt är under ytan
-            const surf = lvl.get(tx, ty - 1) !== T.LIQUID ? ty * 16 + 4 : ty * 16;
-            if (this.bottom > surf + 2) {
+            // bara om mitten av kroppen faktiskt är nere i vätskan
+            const ctx = Math.floor(this.cx / 16);
+            if (ctx !== tx) continue;
+            const surf = lvl.get(tx, ty - 1) !== T.LIQUID ? ty * 16 + 5 : ty * 16;
+            if (this.bottom > surf + 3) {
               W.playerInLiquid(this);
               return;
             }
@@ -430,7 +437,7 @@
       this.inv = 100;
       const dir = srcX != null ? Math.sign(this.cx - srcX) || -this.facing : -this.facing;
       this.vx = dir * 2.4;
-      if (!fromHazard) this.vy = -3.6 * Math.sqrt(this.gmul());
+      if (!fromHazard) this.vy = -3.6 * this.jmul();
       this.jumping = false;
       HK.Audio.sfx('hurt');
       W.game.shake(3);

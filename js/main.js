@@ -9,6 +9,8 @@
     const params = new URLSearchParams(window.location.search);
     if (params.get('unlock')) HK.DEBUG_UNLOCK = true;
     const lv = params.get('level');
+    const th = params.get('theme');
+    if (th && HK.Themes[th]) HK.LEVELS.forEach((d) => { d.theme = th; });
     const scene = params.get('scene');
     if (lv) {
       const idx = HK.LEVELS.findIndex((d) => d.id === lv);

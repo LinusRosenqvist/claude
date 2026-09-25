@@ -58,6 +58,8 @@
         }
       }
     }
+    // föremål som ligger inne i hemliga väggar / bakgrundsväggar
+    for (const o of def.overlay || []) this.spawns.push({ ch: o[2], x: o[0], y: o[1] });
     // hemliga väggar: sammanhängande områden
     this.fakeRegion = new Int16Array(this.w * this.h).fill(-1);
     this.fakeAlpha = [];
