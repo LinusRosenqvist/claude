@@ -95,6 +95,8 @@ Nivåerna skrivs i `tools/levelgen/wN.js` och byggs till `js/levels/`:
 node tools/levelgen/build.js     # bygg alla nivåer
 node tools/validate.js           # kontrollera att Kevin och alla diamanter går att nå
 node tools/validate-endless.js   # samma kontroll för slumpade banor i oändligt läge
+node tools/test-movers.js        # går det att hoppa från alla rörliga plattformar? (Playwright)
+node tools/monkey.js 1-1 2-1     # slumpade knapptryck i webbläsaren, letar efter fel (Playwright)
 ```
 
 `tools/validate.js` simulerar spelarens riktiga fysik från alla ställen man kan stå på
