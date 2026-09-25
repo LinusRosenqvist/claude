@@ -21,7 +21,11 @@
       this.sel = 0;
       this.rects = [];
       this.t = 0;
-      this.lastMouse = { x: -1, y: -1 };
+      this.lastMouse = { x: I.mouse.x, y: I.mouse.y };
+    }
+    reset(sel) {
+      this.sel = sel || 0;
+      this.lastMouse = { x: I.mouse.x, y: I.mouse.y };
     }
     update() {
       this.t++;
@@ -106,10 +110,10 @@
       this.menu = new Menu([
         { label: 'SPELA', action: () => this.play() },
         { label: 'KONTROLLER', action: () => { this.mode = 'controls'; } },
-        { label: 'INSTÄLLNINGAR', action: () => { this.mode = 'settings'; this.settings.sel = 0; } },
+        { label: 'INSTÄLLNINGAR', action: () => { this.mode = 'settings'; this.settings.reset(0); } },
       ]);
       this.settings = new Menu(settingsItems([
-        { label: 'NOLLSTÄLL FRAMSTEG', action: () => { this.mode = 'confirmreset'; this.confirm.sel = 1; } },
+        { label: 'NOLLSTÄLL FRAMSTEG', action: () => { this.mode = 'confirmreset'; this.confirm.reset(1); } },
         { label: 'TILLBAKA', action: () => { this.mode = 'menu'; } },
       ]));
       this.confirm = new Menu([
@@ -199,7 +203,6 @@
         // tjock skugga
         F.draw(ctx, ch, x + 3, y + oy + 4, { scale, color: '#1a1c2c', outline: '#1a1c2c' });
         F.draw(ctx, ch, x, y + oy, { scale, color: col, outline: '#1a1c2c' });
-        F.draw(ctx, ch, x, y + oy, { scale: 1, color: 'rgba(0,0,0,0)', outline: null });
         x += cw + scale;
       }
       F.draw(ctx, 'ETT RETRO-ÄVENTYR', cx, y + 42, { align: 'center', color: '#ffffff', shadow: '#1a1c2c' });
@@ -312,9 +315,14 @@
       ctx.clip();
       HK.Themes.drawBg(ctx, st.pose === 'map' ? 'moln' : st.pose === 'decoy' ? 'stad' : 'kullar', G.t * 0.4, 0, 0, G.t);
       ctx.restore();
-      const cx = VW / 2, gy = 150;
+      const cx = VW / 2, gy = 146;
       const A = HK.Tiles.atlas('kullar');
-      for (let x = 91; x < 389; x += 16) ctx.drawImage(A.ground[14 * 4], x, gy, Math.min(16, 389 - x), 9, x, gy, Math.min(16, 389 - x), 9);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(91, 31, 298, 128);
+      ctx.clip();
+      for (let x = 91; x < 389; x += 16) ctx.drawImage(A.ground[14 * 4 + ((x >> 4) & 3)], x, gy);
+      ctx.restore();
       if (st.pose === 'dance') {
         S.draw(ctx, 'kevin_dance', Math.floor(G.t / 10), cx, gy, { sx: 2, sy: 2 });
         if (G.t % 20 === 0) FX.confetti(cx, 60, 6, { angle: Math.PI / 2, up: 0 });
@@ -329,7 +337,6 @@
         worlds.forEach((w, i) => {
           const x = 110 + i * 46, y = 70 + (i % 2) * 20;
           HK.Hud.panel(ctx, x, y, 40, 30, { fill: HK.Themes[w].sky[2], edge: '#ffffff' });
-          ctx.drawImage(A.ground[0], 0, 0, 1, 1, 0, 0, 0, 0);
           F.draw(ctx, String(i + 1), x + 20, y + 11, { align: 'center', color: '#ffffff' });
         });
         S.draw(ctx, 'kevin_head', 0, 110 + 5 * 46 + 20 + Math.round(Math.sin(G.t * 0.1) * 3), 70 + 20 - 6, {});
@@ -415,7 +422,7 @@
         if (I.hit('back') || I.hit('pause')) this.menuOpen = false;
         return;
       }
-      if (I.hit('pause') || I.hit('back')) { this.menuOpen = true; this.pause.sel = 0; HK.Audio.sfx('pause'); return; }
+      if (I.hit('pause') || I.hit('back')) { this.menuOpen = true; this.pause.reset(0); HK.Audio.sfx('pause'); return; }
       if (this.path.length) {
         const target = NODES[this.path[0]];
         const dx = target[0] - this.pos.x, dy = target[1] - this.pos.y;
@@ -512,9 +519,9 @@
       if (this.menuOpen) {
         ctx.fillStyle = 'rgba(11,8,32,0.6)';
         ctx.fillRect(0, 0, VW, VH);
-        Hud.panel(ctx, VW / 2 - 100, 70, 200, 110);
-        F.draw(ctx, 'MENY', VW / 2, 78, { align: 'center', color: '#ffd23f' });
-        this.pause.draw(ctx, VW / 2, 96);
+        Hud.panel(ctx, VW / 2 - 100, 58, 200, 130);
+        F.draw(ctx, 'MENY', VW / 2, 66, { align: 'center', color: '#ffd23f' });
+        this.pause.draw(ctx, VW / 2, 84);
       }
     }
   }
@@ -628,7 +635,7 @@
     }
     pause() {
       this.state = 'pause';
-      this.pauseMenu.sel = 0;
+      this.pauseMenu.reset(0);
       this.showControls = false;
       HK.Audio.sfx('pause');
       HK.Audio.jetpack(0);
@@ -852,11 +859,12 @@
         F.draw(ctx, 'DU HITTADE KEVIN I HELA PIXELRIKET!', VW / 2, 104, { align: 'center', color: '#ffffff' });
         F.draw(ctx, 'OCH DET VISADE SIG... ATT HAN PLANERADE EN FEST FÖR DIG!', VW / 2, 118, { align: 'center', color: '#c7d2ff' });
       } else {
-        const off = (t - 240) * 0.4;
+        const off = ((t - 240) * 0.4) % (CREDITS.length * 14 + 110);
         CREDITS.forEach((c, i) => {
-          const y = Math.round(200 + i * 14 - off);
-          if (y < 50 || y > 190) return;
-          F.draw(ctx, c[0], VW / 2, y, { align: 'center', color: c[1] || '#ffffff', alpha: y < 70 ? (y - 50) / 20 : 1 });
+          const y = Math.round(146 + i * 14 - off);
+          if (y < 76 || y > 146) return;
+          const a = Math.min(1, (y - 76) / 16, (146 - y) / 12);
+          F.draw(ctx, c[0], VW / 2, y, { align: 'center', color: c[1] || '#ffffff', alpha: a });
         });
         const tot = HK.Save.totals();
         F.draw(ctx, 'DIAMANTER ' + tot.gems + '/' + tot.maxGems + '   STJÄRNOR ' + tot.stars + '/' + tot.count * 3, VW / 2, 60, { align: 'center', color: '#ffd23f' });

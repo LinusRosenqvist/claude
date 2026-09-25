@@ -182,7 +182,7 @@ function validate(def) {
     for (const k of nodes.keys()) {
       const [tx, by] = k.split(',').map(Number);
       const ty = Math.round(by / TS) - 1;
-      if (ty >= 0 && ty < out.length && tx >= 0 && tx < out[0].length && out[ty][tx] === '.') out[ty][tx] = '+';
+      if (ty >= 0 && ty < out.length && tx >= 0 && tx < out[0].length && (out[ty][tx] === '.' || out[ty][tx] === ',')) out[ty][tx] = '+';
     }
     fs.mkdirSync(path.join(__dirname, 'out'), { recursive: true });
     fs.writeFileSync(path.join(__dirname, 'out', 'reach_' + def.id + '.txt'), out.map((r) => r.join('')).join('\n'));

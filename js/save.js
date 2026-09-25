@@ -44,7 +44,10 @@
       const res = { newBest: false };
       cur.done = true;
       for (let i = 0; i < 3; i++) cur.gems[i] = cur.gems[i] || !!stats.gems[i];
-      if (cur.best == null || stats.time < cur.best) { cur.best = stats.time; res.newBest = cur.best != null; }
+      if (cur.best == null || stats.time < cur.best) {
+        res.newBest = cur.best != null;
+        cur.best = stats.time;
+      }
       cur.stars = Math.max(cur.stars || 0, stars);
       cur.coins = Math.max(cur.coins || 0, stats.coins);
       Save.data.levels[def.id] = cur;

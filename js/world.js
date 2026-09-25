@@ -120,9 +120,9 @@
         const bx = Math.floor(this.boss.cx / TS);
         let fy = Math.floor(this.boss.y / TS);
         while (fy < lvl.h && !lvl.solid(bx, fy)) fy++;
-        this.arena = { x0: ar.x * TS, x1: (ar.x + ar.w) * TS, y0: Math.max(0, fy * TS - VH + 16), floor: fy * TS, gateX: ar.x };
-        this.boss.homeY = this.arena.y0 + 40;
-        this.boss.y = this.arena.y0 - 80;
+        this.arena = { x0: ar.x * TS, x1: (ar.x + ar.w) * TS, y0: Math.max(0, fy * TS - 210), floor: fy * TS, gateX: ar.x };
+        this.boss.homeY = fy * TS - 150;
+        this.boss.y = this.arena.y0 - 120;
         this.kevin.caged = true;
       }
     }
@@ -320,9 +320,10 @@
       for (const e of this.enemies) {
         if (!e.active || e.dead || e.dying || !e.shootable || e.isHazard) continue;
         const dx = e.cx - p.cx, dy = e.cy - p.cy;
-        if (Math.sign(dx) !== p.facing && Math.abs(dx) > 8) continue;
+        if (Math.sign(dx) !== p.facing && Math.abs(dx) > 8 && !e.boss) continue;
         const d = Math.hypot(dx, dy);
-        if (d < 210 && Math.abs(dy) < 130 && d < bd) { bd = d; best = e; }
+        const range = e.boss ? 420 : 210;
+        if (d < range && Math.abs(dy) < (e.boss ? 260 : 130) && d < bd) { bd = d; best = e; }
       }
       return best ? { x: best.cx, y: best.cy } : null;
     }
@@ -573,7 +574,21 @@
       p.win = true;
       p.binoc = false;
       p.disco = 0;
+      // ställ Kevin bredvid spelaren så att båda syns
+      const lvl = this.level;
+      const side = k.cx >= p.cx ? 1 : -1;
+      for (const dir of [side, -side]) {
+        const nx = p.cx + dir * 20 - k.w / 2;
+        const tx = Math.floor((nx + k.w / 2) / 16), ty = Math.floor((k.y + k.h - 4) / 16);
+        if (!lvl.solid(tx, ty) && !lvl.solid(tx, ty - 1)) {
+          k.x = nx;
+          k.y = p.y + p.h - k.h;
+          break;
+        }
+      }
       p.facing = k.cx > p.cx ? 1 : -1;
+      k.facing = -p.facing;
+      FX.smoke(k.cx, k.cy, 3);
       HK.Audio.jetpack(0);
       HK.Audio.stopMusic();
       HK.Audio.playMusic('vinst', true);
@@ -609,6 +624,7 @@
         }
         HK.Audio.sfx('thud');
         this.game.shake(3);
+        this.checkpoint = { x: A.x0 + 40, y: A.floor - 18 };
         b.setState('intro');
         b.active = true;
         HK.Audio.playMusic('boss', true);

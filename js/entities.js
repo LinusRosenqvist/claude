@@ -377,6 +377,17 @@
       if (d < 96) this.notice = Math.min(30, this.notice + 1);
       else this.notice = Math.max(0, this.notice - 1);
       if (this.caged) return;
+      if (!this.final && !p.dead) {
+        // hittar spelaren det riktiga gömstället först? då är Kevin redan där.
+        const fs = this.spots[this.spots.length - 1];
+        if (Math.hypot(p.cx - (fs.x * TS + 8), p.cy - (fs.y * TS + 8)) < 72) {
+          FX.smoke(this.cx, this.cy, 6);
+          this.idx = this.spots.length - 1;
+          this.place();
+          this.seen = false;
+          return;
+        }
+      }
       if (!this.final && d < 58 && !p.dead) {
         // poff! till nästa gömställe
         FX.smoke(this.cx, this.cy, 8);
