@@ -30,7 +30,10 @@
 
   A.unlock = function () {
     if (A.ctx) {
-      if (A.ctx.state === 'suspended' && !document.hidden) A.ctx.resume();
+      if (A.ctx.state !== 'running' && !document.hidden) {
+        const r = A.ctx.resume();
+        if (r && r.catch) r.catch(() => {});
+      }
       return;
     }
     const AC = window.AudioContext || window.webkitAudioContext;
@@ -57,6 +60,15 @@
     A.noise = ctx.createBuffer(1, len, ctx.sampleRate);
     const d = A.noise.getChannelData(0);
     for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    try {
+      const b = ctx.createBuffer(1, 1, 22050);
+      const src = ctx.createBufferSource();
+      src.buffer = b;
+      src.connect(ctx.destination);
+      src.start(0);
+    } catch (e) {
+      /* ignorera */
+    }
     A.unlocked = true;
     A.applySettings();
     A.timer = setInterval(A.tick, 25);

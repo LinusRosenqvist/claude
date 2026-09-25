@@ -66,6 +66,11 @@
       window.addEventListener('contextmenu', (e) => { if (e.target === canvas) e.preventDefault(); });
 
       setupTouch();
+      // iOS/Safari släpper bara fram ljud i vissa användarhändelser – försök i alla
+      const unlock = () => { if (HK.Audio) HK.Audio.unlock(); };
+      window.addEventListener('touchend', unlock, { passive: true });
+      window.addEventListener('pointerup', unlock, { passive: true });
+      window.addEventListener('click', unlock, { passive: true });
       window.addEventListener('gamepadconnected', () => { pad.connected = true; });
       window.addEventListener('gamepaddisconnected', () => { pad.connected = false; });
     },
