@@ -1,0 +1,44 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Sprite sheet</title>
+<style>body{margin:0;background:#2a2f45;font:12px monospace;color:#fff}canvas{image-rendering:pixelated}</style>
+</head><body>
+<canvas id="c"></canvas>
+<script src="../js/util.js"></script>
+<script src="../js/font.js"></script>
+<script src="../js/sprites.js"></script>
+<script src="../js/art.js"></script>
+<script>
+HK.Art.build();
+const filter = new URLSearchParams(location.search).get('f');
+const names = Object.keys(HK.Sprites.sheets).filter(n => !filter || n.startsWith(filter));
+const Z = +(new URLSearchParams(location.search).get('z') || 4);
+const c = document.getElementById('c');
+const W = 1400;
+// layout
+let x = 10, y = 10, rowH = 0; const pos = [];
+for (const n of names) {
+  const s = HK.Sprites.sheets[n];
+  const fr = Math.min(s.frames.length, 32);
+  const w = Math.max(fr * (s.w * Z + 4), 90);
+  const h = s.h * Z + 18;
+  if (x + w > W) { x = 10; y += rowH + 8; rowH = 0; }
+  pos.push([n, x, y]); x += w + 12; rowH = Math.max(rowH, h);
+}
+c.width = W; c.height = y + rowH + 20;
+const ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = false;
+ctx.fillStyle = '#2a2f45'; ctx.fillRect(0,0,c.width,c.height);
+for (const [n, px, py] of pos) {
+  const s = HK.Sprites.sheets[n];
+  ctx.fillStyle = '#fff'; ctx.fillText(n, px, py + 10);
+  s.frames.slice(0, 32).forEach((f, i) => {
+    const fx = px + i * (s.w * Z + 4);
+    ctx.fillStyle = (i % 2) ? '#3a405c' : '#343a55';
+    ctx.fillRect(fx, py + 14, s.w * Z, s.h * Z);
+    ctx.drawImage(f, fx, py + 14, s.w * Z, s.h * Z);
+  });
+}
+// font test
+HK.Font.draw(ctx, 'HITTA KEVIN! ÅÄÖ åäö 0123456789 ♥◆★', 10, c.height - 14, {scale: 1});
+window.__done = true;
+</script>
+</body></html>
