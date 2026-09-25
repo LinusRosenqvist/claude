@@ -149,10 +149,12 @@
       }
       p.lastBottom = p.bottom;
       p.update();
-      if (this.state === 'play') this.playerInteractions();
+      // under intro-rutan står allt still så att ingen fiende hinner träffa spelaren
+      const intro = this.cutscene && this.state === 'play';
+      if (this.state === 'play' && !intro) this.playerInteractions();
 
-      for (const e of this.enemies) e.update();
-      if (this.state === 'play') this.playerVsEnemies();
+      if (!intro) for (const e of this.enemies) e.update();
+      if (this.state === 'play' && !intro) this.playerVsEnemies();
       this.updateShots();
       for (const it of this.items) it.update(this);
       for (const c of this.checkpoints) c.update(this);
