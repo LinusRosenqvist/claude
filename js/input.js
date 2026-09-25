@@ -271,10 +271,13 @@
   }
 
   function handlePointer(e, isDown) {
-    const action = touch.visible ? buttonAt(e.clientX, e.clientY) : null;
     const prev = touch.pointers.get(e.pointerId);
-    const rec = { action, x: e.clientX, y: e.clientY, down: isDown || (prev && prev.down) };
-    if (!action) {
+    // Ett finger som började på en knapp förblir ett knappfinger (kan glida mellan knappar),
+    // och ett finger som började på spelytan förblir ett siktfinger.
+    const kind = prev ? prev.kind : touch.visible && buttonAt(e.clientX, e.clientY) ? 'button' : 'aim';
+    const action = kind === 'button' ? buttonAt(e.clientX, e.clientY) : null;
+    const rec = { kind, action, x: e.clientX, y: e.clientY, down: isDown || (prev && prev.down) };
+    if (kind === 'aim') {
       const p = Input.toGame(e.clientX, e.clientY);
       rec.gx = p.x;
       rec.gy = p.y;
@@ -294,7 +297,7 @@
     let aim = null;
     for (const rec of touch.pointers.values()) {
       if (rec.action) now[rec.action] = true;
-      else aim = { x: rec.gx, y: rec.gy };
+      else if (rec.kind === 'aim') aim = { x: rec.gx, y: rec.gy };
     }
     for (const b of TOUCH_BUTTONS) {
       const was = !!touch.held[b.id];

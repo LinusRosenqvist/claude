@@ -735,6 +735,18 @@
           vx: dir * U.rand(4, 7), vy: U.rand(-0.2, 0.2), life: 140, size: 1, color: 'rgba(255,255,255,0.55)', drag: 1,
         }, true);
       }
+      if ((kind === 'petals' || kind === 'sparkles') && r < 0.004) {
+        // en liten flock fåglar
+        const dir = Math.random() < 0.5 ? 1 : -1;
+        const y0 = c.y + U.rand(20, VH * 0.45);
+        const n = U.randInt(2, 4);
+        for (let i = 0; i < n; i++) {
+          FX.add({
+            type: 'bird', x: c.x + (dir > 0 ? -10 - i * 9 : VW + 10 + i * 9), y: y0 + i * 5 * (i % 2 ? -1 : 1),
+            vx: dir * U.rand(0.8, 1.1), vy: 0, life: 700, color: '#2a3a5c', phase: i * 3, drag: 1,
+          }, true);
+        }
+      }
       switch (kind) {
         case 'petals':
           if (r < 0.06) FX.add({ type: 'px', x: c.x + U.rand(0, VW + 60), y: c.y - 4, vx: -U.rand(0.3, 0.8), vy: U.rand(0.3, 0.6), life: 400, size: 2, color: U.pick(['#ffc2cf', '#ffffff', '#ffe0f0', '#fff3a0']), drag: 1 });

@@ -204,6 +204,25 @@
         p.vx += Math.sin(p.age * 0.1 + p.phase) * 0.03;
         break;
       }
+      case 'bird': {
+        // liten fågel som flaxar förbi i bakgrunden
+        const up = Math.floor((p.age + p.phase) / 8) % 2 === 0;
+        ctx.fillStyle = p.color;
+        if (up) {
+          ctx.fillRect(x - 2, y - 1, 1, 1);
+          ctx.fillRect(x - 1, y, 1, 1);
+          ctx.fillRect(x, y + 1, 1, 1);
+          ctx.fillRect(x + 1, y, 1, 1);
+          ctx.fillRect(x + 2, y - 1, 1, 1);
+        } else {
+          ctx.fillRect(x - 2, y + 1, 1, 1);
+          ctx.fillRect(x - 1, y, 1, 1);
+          ctx.fillRect(x, y + 1, 1, 1);
+          ctx.fillRect(x + 1, y, 1, 1);
+          ctx.fillRect(x + 2, y + 1, 1, 1);
+        }
+        break;
+      }
       case 'chunk': {
         ctx.save();
         ctx.translate(x + 4, y + 4);

@@ -473,7 +473,7 @@
       if (this.flat) return;
       this.flat = true;
       HK.Audio.sfx('decoy');
-      FX.text(this.x + 9, this.y - 4, 'PAPP-KEVIN!', '#e0c09a', { life: 80 });
+      FX.text(this.x + 9, this.y - 4, U.pick(['PAPP-KEVIN!', 'BARA KARTONG!', 'LURAD!', 'FEL KEVIN!']), '#e0c09a', { life: 80 });
       FX.burst(this.x + 9, this.y + 10, 10, { colors: ['#c8a27a', '#e0c09a', '#8a5a32'] });
       W.stats.decoys++;
     }
