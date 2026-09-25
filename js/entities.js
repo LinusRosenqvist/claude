@@ -260,13 +260,19 @@
       this.alpha = 1;
     }
     update(W) {
-      this.t++;
       const ox = this.x, oy = this.y;
       if (this.kind === 'h') {
+        this.t++;
         this.x = this.x0 + Math.sin(this.t * this.speed + this.phase) * this.range;
       } else if (this.kind === 'v') {
-        this.y = this.y0 + Math.sin(this.t * this.speed + this.phase) * this.range;
+        const ny = this.y0 + Math.sin((this.t + 1) * this.speed + this.phase) * this.range;
+        // vänta om spelaren står på plattformen och skulle tryckas upp i taket
+        if (!(ny < this.y && W.riding(this) && W.headBlocked(W.player, ny - this.y))) {
+          this.t++;
+          this.y = ny;
+        }
       } else if (this.kind === 'fall') {
+        this.t++;
         if (this.state === 'shake') {
           if (--this.timer <= 0) { this.state = 'fall'; this.vy = 0; HK.Audio.sfx('crumble'); }
         } else if (this.state === 'fall') {

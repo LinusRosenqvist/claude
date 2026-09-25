@@ -386,9 +386,12 @@
       HK.Audio.jetpack(0);
     }
     onHide() {
-      if (this.state === 'play') this.pause();
+      if (this.state === 'play' && this.world.state === 'play') this.pause();
     }
     hideCursor() {
+      return this.state === 'play' && this.world.state === 'play';
+    }
+    wantsTouch() {
       return this.state === 'play' && this.world.state === 'play';
     }
     pause() {
@@ -425,6 +428,10 @@
       this.newBest = this.run.found > (this.run.prevBest || 0);
       if (this.run.found > b.best) U.store.set(KEY, { best: this.run.found, round: this.run.round });
       this.best = Math.max(b.best, this.run.found);
+      this.overMenu = new HK.Menu([
+        { label: 'FÖRSÖK IGEN', action: () => G.transition(() => G.setScene(new EndlessScene())) },
+        { label: 'TILL MENYN', action: () => G.transition(() => G.setScene(new HK.Scenes.TitleScene()), { type: 'fade' }) },
+      ]);
       HK.Audio.stopMusic();
       HK.Audio.jetpack(0);
       HK.Audio.sfx('death');
@@ -452,8 +459,9 @@
         this.gT++;
         FX.update();
         if (this.gT > 50) {
-          if (I.keyHit('KeyR') || I.hit('jump')) { G.transition(() => G.setScene(new EndlessScene())); return; }
-          if (I.hit('confirm') || I.click() || I.hit('back')) { G.transition(() => G.setScene(new HK.Scenes.TitleScene()), { type: 'fade' }); return; }
+          if (I.keyHit('KeyR')) { G.transition(() => G.setScene(new EndlessScene())); return; }
+          if (I.hit('back')) { G.transition(() => G.setScene(new HK.Scenes.TitleScene()), { type: 'fade' }); return; }
+          this.overMenu.update();
         }
         return;
       }
@@ -522,9 +530,7 @@
         F.draw(ctx, r[0], VW / 2 - 100, yy, { color: '#c7d2ff' });
         F.draw(ctx, r[1], VW / 2 + 100, yy, { align: 'right', color: i === 4 && this.newBest ? '#ffd23f' : '#ffffff' });
       });
-      if (t > 50 && Math.floor(t / 25) % 2 === 0) {
-        F.draw(ctx, I.touch.enabled ? 'HOPP = IGEN   TRYCK = MENYN' : 'R = FÖRSÖK IGEN   ENTER = MENYN', VW / 2, y + 178, { align: 'center', color: '#ffd23f' });
-      }
+      if (t > 50 && this.overMenu) this.overMenu.draw(ctx, VW / 2, y + 164, { gap: 14 });
     }
   }
 

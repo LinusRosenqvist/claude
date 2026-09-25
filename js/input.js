@@ -130,6 +130,7 @@
       for (const k in pressed) delete pressed[k];
       for (const k in released) delete released[k];
       for (const k in touch.pressed) delete touch.pressed[k];
+      for (const k in pad.pressed) delete pad.pressed[k];
       mouse.pressed[0] = mouse.pressed[1] = mouse.pressed[2] = false;
       mouse.released[0] = mouse.released[1] = mouse.released[2] = false;
       mouse.wheel = 0;
@@ -323,7 +324,6 @@
     for (let i = 0; i < pads.length; i++) if (pads[i] && pads[i].connected) { gp = pads[i]; break; }
     const h = pad.held;
     for (const k in h) pad.prev[k] = h[k];
-    for (const k in pad.pressed) delete pad.pressed[k];
     if (!gp) {
       for (const k in h) h[k] = false;
       pad.ax = pad.ay = 0;

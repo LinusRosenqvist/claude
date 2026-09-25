@@ -436,7 +436,8 @@
         if (I.hit('back') || I.hit('pause')) this.menuOpen = false;
         return;
       }
-      if (I.hit('pause') || I.hit('back')) { this.menuOpen = true; this.pause.reset(0); HK.Audio.sfx('pause'); return; }
+      const menuTap = I.click() && I.mouse.x > VW - 70 && I.mouse.y < 22;
+      if (I.hit('pause') || I.hit('back') || menuTap) { this.menuOpen = true; this.pause.reset(0); HK.Audio.sfx('pause'); return; }
       if (this.path.length) {
         const target = NODES[this.path[0]];
         const dx = target[0] - this.pos.x, dy = target[1] - this.pos.y;
@@ -530,7 +531,10 @@
       const tot = HK.Save.totals();
       F.draw(ctx, '◆ ' + tot.gems + '/' + tot.maxGems, 8, 8, { color: '#6ff6ff' });
       F.draw(ctx, '★ ' + tot.stars + '/' + tot.count * 3, 8, 20, { color: '#ffd23f' });
-      F.draw(ctx, 'ESC = MENY', VW - 8, 8, { align: 'right', color: '#c7d2ff' });
+      if (I.touch.enabled) {
+        Hud.panel(ctx, VW - 58, 4, 52, 16, { fill: 'rgba(22,16,48,0.85)' });
+        F.draw(ctx, 'MENY', VW - 32, 9, { align: 'center', color: '#ffd23f' });
+      } else F.draw(ctx, 'ESC = MENY', VW - 8, 8, { align: 'right', color: '#c7d2ff' });
       if (this.menuOpen) {
         ctx.fillStyle = 'rgba(11,8,32,0.6)';
         ctx.fillRect(0, 0, VW, VH);
@@ -626,6 +630,7 @@
       this.t = 0;
       this.world = new HK.World(this.def, {
         onComplete: () => this.complete(),
+        onFound: () => this.saveProgress(),
         onBossStart: () => {},
       });
       this.world.cutscene = true;
@@ -646,9 +651,12 @@
       HK.Audio.jetpack(0);
     }
     onHide() {
-      if (this.state === 'play') this.pause();
+      if (this.state === 'play' && this.world.state === 'play') this.pause();
     }
     hideCursor() {
+      return this.state === 'play' && this.world.state === 'play';
+    }
+    wantsTouch() {
       return this.state === 'play' && this.world.state === 'play';
     }
     pause() {
@@ -662,7 +670,10 @@
       this.state = 'play';
       HK.Audio.sfx('pause');
     }
-    complete() {
+    // Sparas så fort Kevin hittas (en gång per varv)
+    saveProgress() {
+      if (this.saved) return;
+      this.saved = true;
       const W = this.world;
       const st = W.stats;
       let stars = 1;
@@ -674,6 +685,12 @@
       this.underPar = st.time <= (this.def.par || 180) * 60;
       const res = HK.Save.complete(this.def, st, stars);
       this.newBest = res.newBest;
+      HK.Save.data.lastLevel = Math.min(HK.LEVELS.length - 1, this.idx + 1);
+      if (this.def.boss) HK.Save.data.finished = true;
+      HK.Save.write();
+    }
+    complete() {
+      this.saveProgress();
       this.state = 'results';
       this.resultsT = 0;
     }

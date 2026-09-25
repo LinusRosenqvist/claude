@@ -107,12 +107,9 @@
     update() {
       const I = HK.Input;
       I.poll();
-      if (I.keyHit('KeyM')) {
-        Game.settings.music = !Game.settings.music;
-        Game.settings.sfx = Game.settings.music;
-        Game.saveSettings();
-        if (HK.Audio) HK.Audio.applySettings();
-      }
+      // pekskärmsknapparna visas bara när man faktiskt spelar
+      const wantTouch = I.touch.enabled && !!(Game.scene && Game.scene.wantsTouch && Game.scene.wantsTouch());
+      if (I.touch.visible !== wantTouch) I.showTouch(wantTouch);
       Game.t++;
       // skak
       if (Game.shakeAmt > 0.1) {
@@ -144,6 +141,12 @@
         // frys bilden en kort stund men behåll knapptryck till nästa riktiga uppdatering
         Game.hitstop--;
         return;
+      }
+      if (I.keyHit('KeyM')) {
+        Game.settings.music = !Game.settings.music;
+        Game.settings.sfx = Game.settings.music;
+        Game.saveSettings();
+        if (HK.Audio) HK.Audio.applySettings();
       }
       if (Game.scene && (!tr || tr.phase !== 'hold')) Game.scene.update();
       I.endFrame();

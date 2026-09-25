@@ -520,8 +520,11 @@
       } else if (this.state === 'land') {
         if (--this.timer <= 0) this.state = 'rise';
       } else if (this.state === 'rise') {
-        this.y -= 0.8;
-        if (this.y <= this.spawnY) { this.y = this.spawnY; this.state = 'wait'; }
+        // står spelaren på stampen och taket är i vägen? då väntar stampen
+        if (!(W.riding(this) && W.headBlocked(p, -0.8))) {
+          this.y -= 0.8;
+          if (this.y <= this.spawnY) { this.y = this.spawnY; this.state = 'wait'; }
+        }
       }
       this.vy = 0;
       this.dy = this.y - oy;

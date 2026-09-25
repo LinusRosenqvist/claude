@@ -53,6 +53,7 @@
       this.lightCanvas = U.makeCanvas(VW / 2, VH / 2);
       this.onComplete = opts.onComplete || null;
       this.onDeath = opts.onDeath || null;
+      this.onFound = opts.onFound || null;
       this.hudTimer = null;
       this.hudTitle = null;
       this.onBossStart = opts.onBossStart || null;
@@ -136,16 +137,23 @@
       const p = this.player;
       this.level.update();
       for (const pl of this.platforms) pl.update(this);
-      // bär spelaren med plattformen
+      // bär spelaren med plattformen (utan att tappa markkontakten, annars går det inte att hoppa)
       if (p.platform && !p.dead) {
         const pl = p.platform;
+        const og = p.onGround, gt = p.groundTile;
         if (pl.dx) {
           const svx = p.vx, svy = p.vy;
           p.vx = pl.dx; p.vy = 0;
           HK.Physics.move(p, this.level, { dropThrough: true });
           p.vx = svx; p.vy = svy;
         }
-        if (pl.dy) p.y += pl.dy;
+        if (pl.dy) {
+          // aldrig klämma in spelaren i taket
+          if (pl.dy < 0 && this.headBlocked(p, pl.dy)) p.platform = null;
+          else p.y += pl.dy;
+        }
+        p.onGround = og;
+        p.groundTile = gt;
       }
       p.lastBottom = p.bottom;
       p.update();
@@ -503,6 +511,23 @@
       for (const e of this.enemies) if (e.isPlatform && !e.dying && e.active && check(e)) return;
     }
 
+    /** Skulle huvudet slå i en fast ruta om entiteten flyttas dy uppåt? */
+    headBlocked(ent, dy) {
+      const top = ent.y + dy;
+      const x0 = Math.floor((ent.x + 1) / TS), x1 = Math.floor((ent.x + ent.w - 1) / TS);
+      const ty = Math.floor(top / TS);
+      for (let tx = x0; tx <= x1; tx++) if (this.level.solid(tx, ty)) return true;
+      return false;
+    }
+
+    /** Står spelaren ovanpå plattformen/entiteten e? */
+    riding(e) {
+      const p = this.player;
+      if (p.dead) return false;
+      if (p.platform === e) return true;
+      return Math.abs(p.y + p.h - e.y) < 3 && p.x + p.w > e.x + 1 && p.x < e.x + e.w - 1 && p.vy >= 0;
+    }
+
     say(ent, text, dur) {
       this.bubbles = this.bubbles.filter((b) => b.ent !== ent);
       this.bubbles.push({ ent, text, t: 0, dur: dur || 120 });
@@ -602,6 +627,8 @@
       FX.confetti(k.cx, k.y, 80, { up: 3 });
       FX.ring(k.cx, k.cy, '#ffd23f', 40, 30);
       this.game.shake(2);
+      // spara direkt, så att inget går förlorat om man lämnar under firandet
+      if (this.onFound) this.onFound();
     }
 
     updateFound() {
@@ -653,7 +680,11 @@
     onBossDown(b) {
       HK.Audio.stopMusic();
       this.eshots.length = 0;
-      for (const e of this.enemies) if (!e.boss && !e.dying) e.die('shot');
+      for (const e of this.enemies) {
+        if (e.boss || e.dying) continue;
+        if (e.isHazard || typeof e.die !== 'function' || e.shootable === false) { if (e instanceof HK.Enemies.Blixt) e.dead = true; continue; }
+        e.die('shot');
+      }
       this.say(b, 'NEEEJ! MINA KRETSAR!', 120);
     }
 
